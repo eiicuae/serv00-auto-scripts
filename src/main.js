@@ -75,9 +75,10 @@ async function sendTelegramMessage(token, chatId, message) {
 
             await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-            const isLoggedIn = await page.evaluate(() => {
-                return document.querySelector('a[href="/logout/"]') !== null;
-            });
+            // DevilWEB 2.2 is an SPA: a successful login lands on /next/,
+                // a failed login stays on /login/. The old logout-link anchor
+            // no longer exists in the DOM, so detect login by URL.
+            const isLoggedIn = !page.url().includes('/login/');
 
             const nowUtc = formatToISO(new Date());
             const nowBeijing = formatToISO(new Date(new Date().getTime() + 8 * 60 * 60 * 1000));
